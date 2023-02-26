@@ -11,29 +11,47 @@ fn get_number() -> f32 {
 }
 
 fn main() {
-    println!("Enter the first number:");
-    let a = get_number();
+    println!("Enter number:");
+    let mut result = get_number();
 
-    println!("Enter the second number:");
-    let b = get_number();
+    let mut order = true;
+    let mut current_operator = '=';
 
-    println!("Enter the operation symbol (+, -, * or /):");
-    let mut op = String::new();
+    loop {
+        match order {
+            false => {
+                println!("Enter number: ");
+                let num = get_number();
 
-    io::stdin()
-        .read_line(&mut op)
-        .expect("Failed to read line");
+                result = match current_operator {
+                    '+' => result + num,
+                    '-' => result - num,
+                    '*' => result * num,
+                    '/' => result / num,
+                    _ => panic!("Invalid operator"),
+                };
 
-    let op = op.trim();
+                println!("{}", result);
 
-    let result:f32  = match op {
-        "+" => a + b,
-        "-" => a - b,
-        "*" => a * b,
-        "/" => a / b,
-        _ => panic!("Invalid operator"),
-    };
+                order = true;
+            }
+            true => {
+                println!("Enter operator (+, -, *, /, =):"); // '=' will finish calculation
+                let mut op = String::new();
 
-    println!("{} {} {} = {}", a, op, b, result);
+                io::stdin()
+                    .read_line(&mut op)
+                    .expect("Failed to read line");
 
+                current_operator = op.chars().take(1).last().unwrap();
+
+                if current_operator == '=' {
+                    println!("{}", result);
+                    break;
+                }
+
+                order = false;
+            }
+        }
+    }
 }
